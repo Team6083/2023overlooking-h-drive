@@ -49,9 +49,9 @@ public class NewAutoEngine {
   public static void start() {
     currentStep = 0;
 
-    DriveBase.resetEnc();
+    DriveBase.resetEncoderOn();
     DriveBase.resetGyro();
-    DriveBase.resetPIDs();
+    DriveBase.resetPID();
     autoSelected = chooser.getSelected();
 
     timer.reset();
@@ -64,7 +64,7 @@ public class NewAutoEngine {
     SmartDashboard.putNumber("Time", timer.get());
     switch (autoSelected) { //choose the trajectory
       case DoNothing:
-      DriveBase.directControl(0, 0);
+      DriveBase.directControl(0, 0, 0);
         break;
     }
   }
