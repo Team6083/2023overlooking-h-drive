@@ -27,14 +27,13 @@ public class DriveBase {
     private static final int Lm2 = 2;
     private static final int Rm1 = 3;
     private static final int Rm2 = 4;
-    private static final int Mm = 5;
 
     // Basis divebase
     public static WPI_TalonSRX leftMotor1;// Define motor
     public static WPI_TalonSRX leftMotor2;
     public static WPI_TalonSRX rightMotor1;
     public static WPI_TalonSRX rightMotor2;
-    public static WPI_TalonSRX middleMotor;
+   
     public static MotorControllerGroup leftmotor;
     public static MotorControllerGroup rightmotor;
     public static DifferentialDrive drive;// Use to simplified drivebase program
@@ -76,7 +75,7 @@ public class DriveBase {
         leftMotor2 = new WPI_TalonSRX(Lm2);
         rightMotor1 = new WPI_TalonSRX(Rm1);
         rightMotor2 = new WPI_TalonSRX(Rm2);
-        middleMotor = new WPI_TalonSRX(Mm);
+       
 
         leftmotor = new MotorControllerGroup(leftMotor1, leftMotor2);
         rightmotor = new MotorControllerGroup(rightMotor1, rightMotor2);
@@ -87,7 +86,6 @@ public class DriveBase {
         // Reset encoder
         leftMotor1.configClearPositionOnQuadIdx(true, 10);
         rightMotor1.configClearPositionOnQuadIdx(true, 10);
-        middleMotor.configClearPositionOnQuadIdx(true, 10);
 
         // Define gyro ID
         gyro = new AHRS(SPI.Port.kMXP);// Gyro needs to add a class to fit into our library, which means that it 
@@ -104,20 +102,18 @@ public class DriveBase {
         
         double leftV = -Robot.xbox.getLeftY()*0.9;
         double rightV = Robot.xbox.getRightY()*0.9;
-        double middleV = Robot.xbox.getLeftX()*0.9;
+    
 
         if(Robot.xbox.getRightBumperPressed()||Robot.xbox.getRightBumperPressed()){
             leftV = leftV*1.05;
             rightV = rightV*1.05;
-            middleV = middleV*1.05;
         }
 
         drive.tankDrive(leftV, rightV);
-        middleMotor.set(middleV);
+      
 
         putDashboard();
     }
-
     // This is for Limelight Visiontracking
     public static void track(double speed, double rotation, boolean input){
         drive.arcadeDrive(speed, rotation,input);// The "arcadeDrive" allow the System to control a particular motor to
@@ -129,9 +125,9 @@ public class DriveBase {
     }
 
     // For some strange function, highly point to some special operate
-    public static void directControl(double left, double right, double middle){
+    public static void directControl(double left, double right){
         drive.tankDrive(left, right);// The "directControl" is an easy way to control drivebase, we usually use it
-        middleMotor.set(middle);     // when  there is a GyroWalker or EncoderWalker. To use directControl, we need
+                                    // when  there is a GyroWalker or EncoderWalker. To use directControl, we need
                                      // two numbers which are used to control both sides. For instance, the
                                      // EncoderWalker will output two numbers in order to control the motor of the right
                                      // and left.
@@ -225,13 +221,11 @@ public class DriveBase {
     public static void resetEncoderOn(){
         leftMotor1.configClearPositionOnQuadIdx(true, 10);
         rightMotor1.configClearPositionOnQuadIdx(true, 10);
-        middleMotor.configClearPositionOnQuadIdx(true, 10);
     }
 
     public static void resetEncoderOff(){
         leftMotor1.configClearPositionOnQuadIdx(false, 10);
         rightMotor1.configClearPositionOnQuadIdx(false, 10);
-        middleMotor.configClearPositionOnQuadIdx(false, 10);
     }
 
     public static void resetGyro(){
@@ -243,4 +237,3 @@ public class DriveBase {
         rightPID.reset();
     }
 }
-
