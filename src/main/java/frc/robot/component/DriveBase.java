@@ -27,12 +27,14 @@ public class DriveBase {
     private static final int Lm2 = 2;
     private static final int Rm1 = 3;
     private static final int Rm2 = 4;
+    private static final int Mm = 5;
 
     // Basis divebase
     public static WPI_TalonSRX leftMotor1;// Define motor
     public static WPI_TalonSRX leftMotor2;
     public static WPI_TalonSRX rightMotor1;
     public static WPI_TalonSRX rightMotor2;
+    public static WPI_TalonSRX middleMotor;
    
     public static MotorControllerGroup leftmotor;
     public static MotorControllerGroup rightmotor;
@@ -75,7 +77,7 @@ public class DriveBase {
         leftMotor2 = new WPI_TalonSRX(Lm2);
         rightMotor1 = new WPI_TalonSRX(Rm1);
         rightMotor2 = new WPI_TalonSRX(Rm2);
-       
+        middleMotor = new WPI_TalonSRX(Mm);
 
         leftmotor = new MotorControllerGroup(leftMotor1, leftMotor2);
         rightmotor = new MotorControllerGroup(rightMotor1, rightMotor2);
