@@ -15,7 +15,7 @@ public class Limelight {
     protected static boolean Limelight_SwitchRight = false;
     private static double hDriveSpeed;
     private static final double hDrive_MaxSpeed = 0.8;
-    private static final double a = 0.0; // to be confirmed
+    private static final double DxNumber = 7.76516602; // to be confirmed
 
     public static void init() {
         pid = new PIDController(0.04, 0.001, 0.0001); // to be confirmed
@@ -49,7 +49,7 @@ public class Limelight {
 
     public static void aiming() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
-        tx = table.getEntry("tx").getDouble(0) - a;
+        tx = table.getEntry("tx").getDouble(0) - DxNumber;
         tv = table.getEntry("tv").getDouble(0);
         hDriveSpeed = pid.calculate(tx, 0.0);
         if (tv > 0) {
