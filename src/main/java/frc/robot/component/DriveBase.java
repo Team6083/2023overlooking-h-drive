@@ -35,7 +35,6 @@ public class DriveBase {
     public static WPI_TalonSRX rightMotor1;
     public static WPI_TalonSRX rightMotor2;
     public static WPI_TalonSRX middleMotor;
-   
     public static MotorControllerGroup leftmotor;
     public static MotorControllerGroup rightmotor;
     public static DifferentialDrive drive;// Use to simplified drivebase program
@@ -88,6 +87,7 @@ public class DriveBase {
         // Reset encoder
         leftMotor1.configClearPositionOnQuadIdx(true, 10);
         rightMotor1.configClearPositionOnQuadIdx(true, 10);
+        middleMotor.configClearPositionOnQuadIdx(true, 10);
 
         // Define gyro ID
         gyro = new AHRS(SPI.Port.kMXP);// Gyro needs to add a class to fit into our library, which means that it 
@@ -104,18 +104,20 @@ public class DriveBase {
         
         double leftV = -Robot.xbox.getLeftY()*0.9;
         double rightV = Robot.xbox.getRightY()*0.9;
-    
+        double middleV = Robot.xbox.getLeftX()*0.9;
 
         if(Robot.xbox.getRightBumperPressed()||Robot.xbox.getRightBumperPressed()){
             leftV = leftV*1.05;
             rightV = rightV*1.05;
+            middleV = middleV*1.05;
         }
 
         drive.tankDrive(leftV, rightV);
-      
+        middleMotor.set(middleV);
 
         putDashboard();
     }
+
     // This is for Limelight Visiontracking
     public static void track(double speed, double rotation, boolean input){
         drive.arcadeDrive(speed, rotation,input);// The "arcadeDrive" allow the System to control a particular motor to
@@ -223,11 +225,13 @@ public class DriveBase {
     public static void resetEncoderOn(){
         leftMotor1.configClearPositionOnQuadIdx(true, 10);
         rightMotor1.configClearPositionOnQuadIdx(true, 10);
+        middleMotor.configClearPositionOnQuadIdx(true, 10);
     }
 
     public static void resetEncoderOff(){
         leftMotor1.configClearPositionOnQuadIdx(false, 10);
         rightMotor1.configClearPositionOnQuadIdx(false, 10);
+        middleMotor.configClearPositionOnQuadIdx(true, 10);
     }
 
     public static void resetGyro(){
