@@ -80,7 +80,8 @@ public class DriveBase {
 
         leftmotor = new MotorControllerGroup(leftMotor1, leftMotor2);
         rightmotor = new MotorControllerGroup(rightMotor1, rightMotor2);
-        leftMotor1.setSensorPhase(true);; // Reverse the encoder
+        //leftMotor1.setSensorPhase(true);; // Reverse the encoder
+        leftmotor.setInverted(true);
         drive = new DifferentialDrive(leftmotor, rightmotor);// Define which motor we need to
                                                              // use in drivebasse
 
@@ -105,12 +106,6 @@ public class DriveBase {
         double leftV = -Robot.xbox.getLeftY()*0.9;
         double rightV = Robot.xbox.getRightY()*0.9;
         double middleV = Robot.xbox.getLeftX()*0.9;
-
-        if(Robot.xbox.getRightBumperPressed()||Robot.xbox.getRightBumperPressed()){
-            leftV = leftV*1.05;
-            rightV = rightV*1.05;
-            middleV = middleV*1.05;
-        }
 
         drive.tankDrive(leftV, rightV);
         middleMotor.set(middleV);
