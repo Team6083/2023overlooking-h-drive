@@ -101,7 +101,7 @@ public class DriveBase {
     }
 
     // Here comes some function to control robot normal drivebase
-    public static void teloop(){
+    public static void teleop(){
         
         double leftV = -Robot.xbox.getLeftY()*0.9;
         double rightV = Robot.xbox.getRightY()*0.9;
@@ -124,9 +124,9 @@ public class DriveBase {
     }
 
     // For some strange function, highly point to some special operate
-    public static void directControl(double left, double right, double middle){
+    public static void directControl(double left, double right){
         drive.tankDrive(left, right);// The "directControl" is an easy way to control drivebase, we usually use it
-        middleMotor.set(middle);     // when  there is a GyroWalker or EncoderWalker. To use directControl, we need
+                                    // when  there is a GyroWalker or EncoderWalker. To use directControl, we need
                                      // two numbers which are used to control both sides. For instance, the
                                      // EncoderWalker will output two numbers in order to control the motor of the right
                                      // and left.
@@ -226,7 +226,7 @@ public class DriveBase {
     public static void resetEncoderOff(){
         leftMotor1.configClearPositionOnQuadIdx(false, 10);
         rightMotor1.configClearPositionOnQuadIdx(false, 10);
-        middleMotor.configClearPositionOnQuadIdx(false, 10);
+        middleMotor.configClearPositionOnQuadIdx(true, 10);
     }
 
     public static void resetGyro(){
@@ -238,4 +238,3 @@ public class DriveBase {
         rightPID.reset();
     }
 }
-
