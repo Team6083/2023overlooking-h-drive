@@ -9,12 +9,10 @@ import frc.robot.Robot;
 public class Intake {
     private static Compressor com ;
     private static DoubleSolenoid sol1;
-    private static DoubleSolenoid sol2;
     private static boolean sol_Forward = true;
     public static void init() {
     com = new Compressor(null);
     sol1 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 0);
-    sol2 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 0);
     }
     public static void teleop() {
     if(Robot.xbox.getYButton()){
@@ -38,11 +36,9 @@ public class Intake {
 
     public static void solOn(){
         sol1.set(Value.kForward);
-        sol2.set(Value.kForward);
     }
 
     public static void solOff(){
         sol1.set(Value.kOff);
-        sol2.set(Value.kOff);
     }
 }
