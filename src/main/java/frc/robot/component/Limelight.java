@@ -14,7 +14,7 @@ public class Limelight {
     protected static boolean Limelight_SwitchLeft = false;
     protected static boolean Limelight_SwitchRight = false;
     private static double hDriveSpeed;
-    private static final double hDrive_MaxSpeed = 0.8;
+    private static final double hDrive_MaxSpeed = 0.8; // to be confirmed
     private static final double DxNumber = Math.toDegrees(Math.atan2(12, 88)); // to be confirmed
 
     public static void init() {
