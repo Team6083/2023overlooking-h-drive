@@ -1,10 +1,10 @@
 package frc.robot.component;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
 import edu.wpi.first.wpilibj.Encoder;
 import frc.robot.Robot;
 
@@ -18,6 +18,8 @@ public class Arm {
     private static CANSparkMax ArmMotor1;
     private static CANSparkMax ArmMotor2;
     private static final int karm = 0;
+    //private CANEncoder encoder1 =  ArmMotor1.getEncoder();
+    //private static CANEncoder encoder = new CANEncoder(ArmMotor1);
     private static RelativeEncoder ArmEncoder;
     // private static SparkMaxAlternateEncoder.Type kAltEncType = SparkMaxAlternateEncoder.Type.kQuadrature;
     
