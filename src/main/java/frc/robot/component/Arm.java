@@ -4,7 +4,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Encoder;
 import frc.robot.Robot;
@@ -32,7 +31,6 @@ public class Arm {
         line = new WPI_VictorSPX(kline); 
         ArmEncoder= ArmMotor1.getEncoder();
         lineEncoder = new Encoder(0, 1);
-        //ArmEncoder= ArmMotor1.getAlternateEncoder(kAltEncType, kCPR);
     }
 
     public static void teleop() {
