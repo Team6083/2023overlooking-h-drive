@@ -24,13 +24,13 @@ public class Limelight {
     }
 
     public static void teleop() {
-        if (Robot.xbox.getXButtonPressed()) { // to be confirmed
+        if (Robot.xbox.getXButtonPressed()) { // buttons to be confirmed
             Limelight_SwitchLeft = !Limelight_SwitchLeft;
             if (Limelight_SwitchLeft) {
                 Limelight_SwitchRight = false;
             }
         }
-        if (Robot.xbox.getYButtonPressed()) { // to be confirmed
+        if (Robot.xbox.getYButtonPressed()) { // buttons to be confirmed
             Limelight_SwitchRight = !Limelight_SwitchRight;
             if (Limelight_SwitchRight) {
                 Limelight_SwitchLeft = false;
@@ -49,7 +49,7 @@ public class Limelight {
 
     public static void aiming() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
-        tx = table.getEntry("tx").getDouble(0) - DxNumber;
+        tx = table.getEntry("tx").getDouble(0) - DxNumber; // Dxnumber: Horizontal Offset From Limelight To the Arm
         tv = table.getEntry("tv").getDouble(0);
         hDriveSpeed = pid.calculate(tx, 0.0);
         if (tv > 0) {
@@ -67,10 +67,10 @@ public class Limelight {
 
     public static void finding() {
         if (Limelight_SwitchLeft) {
-            DriveBase.middleMotor.set(0.5);
+            DriveBase.middleMotor.set(0.8);
         }
         if (Limelight_SwitchRight) {
-            DriveBase.middleMotor.set(-0.5);
+            DriveBase.middleMotor.set(-0.8);
         }
 
     }
