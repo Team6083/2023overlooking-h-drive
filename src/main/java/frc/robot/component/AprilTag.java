@@ -9,6 +9,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
+import frc.robot.component.DriveBase;
 import frc.robot.System.NewAutoEngine;
 
 public class AprilTag {
@@ -29,7 +30,10 @@ public class AprilTag {
     public static NetworkTableEntry ta = table.getEntry("ta");
     public static NetworkTableEntry tv = table.getEntry("tv");
 
-    public static PIDController pid;
+    public static PIDController pid_Mid;
+    public static PIDController pid_H;
+    public static PIDController pid_M;
+    public static PIDController pid_L;
 
     public static void init() {
         // read values periodically
@@ -65,7 +69,7 @@ public class AprilTag {
 
     }
 
-    public static void distance() {// value caution
+    public static void teleop () {// value caution
         double targetOffsetAngle_Vertical = ty.getDouble(0.0);
 
         // how many degrees back is your limelight rotated from perfectly vertical?
@@ -127,16 +131,31 @@ public class AprilTag {
         // double[6]);
 
         // measurement calculating
+        //double measurement = b_X;
+        //return b_X;
+        double measurement = b_X;
 
-    }
-
-    public static void teleop() {
         if (Robot.xbox.getXButton()) {
             // distance from bot to target
-            pid = new PIDController(kP, kI, kD);
-            double test_speed;
-            test_speed = pid.calculate(setpoint);// need double measurement
-        }
+            pid_Mid = new PIDController(kP, kI, kD);
+            //double test_speed;
+            pid_Mid.calculate(measurement);
     }
+        if (Robot.xbox.getYButton()){
+            //forward/back
+            pid_H = new PIDController(kP, kI, kD);
+            pid_H.calculate(measurement, dHIGH_CUBE);
+        }
+
+        if (Robot.xbox.getBButton()){
+            pid_M = new PIDController(kP, kI, kD);
+            pid_M.calculate(measurement, dMIDDLE_CUBE);
+        }
+
+        if (Robot.xbox.getXButton()){
+            pid_L = new PIDController(kP, kI, kD);
+            pid_L.calculate(measurement, dLOW_CUBE);
+        }
+}
 
 }
