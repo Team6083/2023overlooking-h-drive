@@ -129,49 +129,48 @@ public class NewAutoEngine {
                 }
                 break;
             case 2:
-                if(Arm.autoAccessDegree()>31.5){
+                if(Arm.autoAccessDegree()<35.5){
                     Arm.autoArm(0);
                     if(k){
-                        Arm.autoVic(0);
+                        Arm.autoLine(0);
                         Intake.solOn();
                         currentStep++;
                     } else {
-                        Arm.autoVic(-0.9);
+                        Arm.autoLine(-0.9);
                     }
                 } else {
-                    Arm.autoArm(0.85);
+                    Arm.autoArm(-0.85);
                 }
                 break;
             case 3:
                 if(k){
                     Arm.autoArm(0);
-                    Arm.autoVic(0);
+                    Arm.autoLine(0);
                     currentStep++;
                     timer.reset();
                     timer.start();
                     DriveBase.resetEncoderOn();
                     DriveBase.resetEncoderOff();
-                    DriveBase.leftMotor1.setInverted(true);
-                    DriveBase.rightMotor1.setInverted(false);
+                    DriveBase.leftMotor1.setInverted(false);
+                    DriveBase.rightMotor1.setInverted(true);
                     DriveBase.odometry.resetPosition(trajectory[blueLeft[1]].getInitialPose().getRotation()
                     , DriveBase.positionToDistanceMeter(DriveBase.leftMotor1.getSelectedSensorPosition())
                     , DriveBase.positionToDistanceMeter(DriveBase.rightMotor1.getSelectedSensorPosition())
                     ,trajectory[blueLeft[1]].getInitialPose());
                 } else {
                     Arm.autoArm(0.8);
-                    Arm.autoVic(0.9);
+                    Arm.autoLine(0.9);
                 }
                 break;
             case 4:
                 DriveBase.runTraj(trajectory[blueLeft[1]], timer.get());
-                if(trajectory[blueLeft[1]].getTotalTimeSeconds()<timer.get()){
+                if(timer.get()>trajectory[blueLeft[1]].getTotalTimeSeconds()){
                     currentStep++;
                 }
                 break;
-            case 5:
-                Intake.solOff();
-                break;
-            default:        
+            default:
+            DriveBase.leftmotor.setInverted(true);
+            DriveBase.rightmotor.setInverted(false);        
         }
     }
 
@@ -194,41 +193,46 @@ public class NewAutoEngine {
                 }
                 break;
             case 2:
-                if(Arm.autoAccessDegree()>31.5){
+                if(Arm.autoAccessDegree()<35.5){
                     Arm.autoArm(0);
                     if(k){
-                        Arm.autoVic(0);
+                        Arm.autoLine(0);
                         Intake.solOn();
                         currentStep++;
                     } else {
-                        Arm.autoArm(0.85);
+                        Arm.autoArm(-0.85);
                     }
                 }
                 break;
             case 3:
                 if(k){
                 Arm.autoArm(0);
-                Arm.autoVic(0);
+                Arm.autoLine(0);
                 currentStep++;
                 timer.reset();
                 timer.start();
                 DriveBase.resetEncoderOn();
                 DriveBase.resetEncoderOff();
-                DriveBase.leftMotor1.setInverted(true);
-                DriveBase.rightMotor1.setInverted(false);
+                DriveBase.leftMotor1.setInverted(false);
+                DriveBase.rightMotor1.setInverted(true);
                 DriveBase.odometry.resetPosition(trajectory[blueMiddle[1]].getInitialPose().getRotation()
                 , DriveBase.positionToDistanceMeter(DriveBase.leftMotor1.getSelectedSensorPosition())
                 , DriveBase.positionToDistanceMeter(DriveBase.rightMotor1.getSelectedSensorPosition())
                 ,trajectory[blueMiddle[1]].getInitialPose());
                 } else {
                     Arm.autoArm(0.8);
-                    Arm.autoVic(0.9);
+                    Arm.autoLine(0.9);
                 }
                 break;
             case 4:
                 DriveBase.runTraj(trajectory[blueMiddle[1]], timer.get());
+                if(timer.get()>trajectory[blueMiddle[1]].getTotalTimeSeconds()){
+                  currentStep++;
+                }
                 break;
             default:
+                DriveBase.leftMotor1.setInverted(false);
+                DriveBase.rightMotor1.setInverted(true);
         }
     }
     public static void BlueRight(){
@@ -245,19 +249,19 @@ public class NewAutoEngine {
                 break;
             case 1: 
                 DriveBase.runTraj(trajectory[blueRight[0]], timer.get());
-                if(trajectory[0].getTotalTimeSeconds()<timer.get()){
+                if(timer.get()>trajectory[blueRight[0]].getTotalTimeSeconds()){
                     currentStep++;
                 }
                 break;
             case 2:
-                if(Arm.autoAccessDegree()>31.5){
+                if(Arm.autoAccessDegree()<35.5){
                     Arm.autoArm(0);
                     if(k){
-                        Arm.autoVic(0);
+                        Arm.autoLine(0);
                         Intake.solOn();
                         currentStep++;
                     } else {
-                        Arm.autoVic(-0.9);
+                        Arm.autoLine(-0.9);
                     }
                 } else {
                     Arm.autoArm(0.85);
@@ -267,7 +271,7 @@ public class NewAutoEngine {
             case 3:
                 if(k){
                     Arm.autoArm(0);
-                    Arm.autoVic(0);
+                    Arm.autoLine(0);
                     currentStep++;
                     timer.reset();
                     timer.start();
@@ -281,7 +285,7 @@ public class NewAutoEngine {
                     ,trajectory[blueRight[1]].getInitialPose()); 
                 } else {
                     Arm.autoArm(0.8);
-                    Arm.autoVic(0.9);
+                    Arm.autoLine(0.9);
                 }
             case 4:
                 DriveBase.runTraj(trajectory[blueRight[0]], timer.get());
@@ -315,14 +319,14 @@ public class NewAutoEngine {
                 }
                 break;
             case 2:
-                if(Arm.autoAccessDegree()>31.5){
+                if(Arm.autoAccessDegree()<35.5){
                     Arm.autoArm(0);
                     if(k){
-                        Arm.autoVic(0);
+                        Arm.autoLine(0);
                         Intake.solOn();
                         currentStep++;
                     } else {
-                        Arm.autoVic(-0.9);
+                        Arm.autoLine(-0.9);
                     }
                 } else {
                     Arm.autoArm(0.85);
@@ -340,7 +344,7 @@ public class NewAutoEngine {
                     ,trajectory[redLeft[1]].getInitialPose());
                 } else {
                     Arm.autoArm(0.8);
-                    Arm.autoVic(0.9);
+                    Arm.autoLine(0.9);
                 }
                 break;
             case 4:  
@@ -374,8 +378,8 @@ public class NewAutoEngine {
                 }
                 break;
             case 2:
-                if(Arm.autoAccessDegree()>31.5){
-                    Arm.autoVic(0);
+                if(Arm.autoAccessDegree()<35.5){
+                    Arm.autoLine(0);
                     Intake.solOff();
                     currentStep++;
                 } else {
@@ -416,14 +420,14 @@ public class NewAutoEngine {
                 }
                 break;
             case 2:
-                if(Arm.autoAccessDegree()>31.5){
+                if(Arm.autoAccessDegree()<35.5){
                     Arm.autoArm(0);
                     if(k){
-                        Arm.autoVic(0);
+                        Arm.autoLine(0);
                         Intake.solOn();
                         currentStep++;
                     } else {
-                        Arm.autoVic(-0.9);
+                        Arm.autoLine(-0.9);
                     }
                 } else {
                     Arm.autoArm(0.85);
@@ -432,7 +436,7 @@ public class NewAutoEngine {
             case 3:
                 if(k){
                     Arm.autoArm(0);
-                    Arm.autoVic(0);
+                    Arm.autoLine(0);
                     currentStep++;
                     timer.reset();
                     timer.start();
@@ -444,7 +448,7 @@ public class NewAutoEngine {
                     ,trajectory[redRight[1]].getInitialPose());
                 } else {
                     Arm.autoArm(0.8);
-                    Arm.autoVic(0.9);
+                    Arm.autoLine(0.9);
                 }
                 break;
             case 4:
