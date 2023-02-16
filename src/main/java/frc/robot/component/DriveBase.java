@@ -48,7 +48,7 @@ public class DriveBase {
     public static DifferentialDriveOdometry odometry;
 
     protected static RamseteController ramseteController = new RamseteController();
-    protected static DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(0.63);
+    protected static DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(0.53);
 
     protected static Field2d field = new Field2d();
     protected static Field2d trajField = new Field2d();
@@ -66,10 +66,10 @@ public class DriveBase {
     public static PIDController rightPID = new PIDController(kP, kI, kD);
 
     // Set the pulse of the encoder
-    public static final double encoderPulse = 4096;
+    private static final double encoderPulse = 4096;
 
     // Set the gearing
-    public static final double gearing = 10.71;
+    private static final double gearing = 10.71;
 
     public static void init() {
         leftMotor1 = new WPI_TalonSRX(Lm1);// Add ID into MotorControler
@@ -80,7 +80,7 @@ public class DriveBase {
 
         leftmotor = new MotorControllerGroup(leftMotor1, leftMotor2);
         rightmotor = new MotorControllerGroup(rightMotor1, rightMotor2);
-        // leftMotor1.setSensorPhase(true);; // Reverse the encoder
+        // Reverse the encoder
         leftmotor.setInverted(true);
         drive = new DifferentialDrive(leftmotor, rightmotor);// Define which motor we need to
                                                              // use in drivebasse
@@ -113,17 +113,6 @@ public class DriveBase {
         middleMotor.set(middleV);
 
         putDashboard();
-    }
-
-    // This is for Limelight Visiontracking
-    public static void track(double speed, double rotation, boolean input) {
-        drive.arcadeDrive(speed, rotation, input);// The "arcadeDrive" allow the System to control a particular motor to
-                                                  // change its speed, and rotation(which relate to circulation or to
-                                                  // moving
-                                                  // like a circle). This will be used in Limelight tracking, cause that
-                                                  // Limelight will return two numbers which are calculated by
-                                                  // PIDcontoller and one of them is used to control speed while the
-                                                  // other is used to control rotation
     }
 
     // For some strange function, highly point to some special operate
@@ -161,8 +150,8 @@ public class DriveBase {
         double leftVolt = leftPID.calculate(
                 positionToDistanceMeter(leftMotor1.getSelectedSensorPosition() / NewAutoEngine.timer.get()), left)
                 + feedforward.calculate(left);
-        double rightVolt = leftPID.calculate(
-                positionToDistanceMeter(rightMotor1.getSelectedSensorPosition() / NewAutoEngine.timer.get()), left)
+        double rightVolt = rightPID.calculate(
+                positionToDistanceMeter(rightMotor1.getSelectedSensorPosition() / NewAutoEngine.timer.get()), right)
                 + feedforward.calculate(right);
 
         leftmotor.setVoltage(leftVolt);
