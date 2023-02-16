@@ -35,6 +35,7 @@ public class DriveBase {
     public static WPI_TalonSRX rightMotor1;
     public static WPI_TalonSRX rightMotor2;
     public static WPI_TalonSRX middleMotor;
+
     public static MotorControllerGroup leftmotor;
     public static MotorControllerGroup rightmotor;
     public static DifferentialDrive drive;// Use to simplified drivebase program
@@ -44,11 +45,12 @@ public class DriveBase {
     public static AHRS gyro; // To detect the current angle, and design which angle we want to match, then
                              // calculate to match the goal
 
-    // For dashboard
     public static DifferentialDriveOdometry odometry;
-
     protected static RamseteController ramseteController = new RamseteController();
     protected static DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(0.53);
+
+    // Feedforward Controller
+    protected static SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.7, 0.1);
 
     protected static Field2d field = new Field2d();
     protected static Field2d trajField = new Field2d();
@@ -58,18 +60,23 @@ public class DriveBase {
     public static double kI = 0;
     public static double kD = 0;
 
-    // Feedforward Controller
-    protected static SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.7, 0.1);
-
-    // PIDController
     public static PIDController leftPID = new PIDController(kP, kI, kD);
     public static PIDController rightPID = new PIDController(kP, kI, kD);
 
     // Set the pulse of the encoder
     private static final double encoderPulse = 4096;
 
-    // Set the gearing
     private static final double gearing = 10.71;
+
+    private static double LeftVolt;
+    private static double RightVolt;
+
+    private static double left;
+    private static double right;
+    private static double middle;
+
+    private static double leftWheelSpeed;
+    private static double rightWheelSpeed;
 
     public static void init() {
         leftMotor1 = new WPI_TalonSRX(Lm1);
@@ -80,7 +87,6 @@ public class DriveBase {
 
         leftmotor = new MotorControllerGroup(leftMotor1, leftMotor2);
         rightmotor = new MotorControllerGroup(rightMotor1, rightMotor2);
-        // Reverse the encoder
         leftmotor.setInverted(true);
         rightmotor.setInverted(false);
         drive = new DifferentialDrive(leftmotor, rightmotor);
@@ -97,25 +103,36 @@ public class DriveBase {
         odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(0),
                 positionToDistanceMeter(leftMotor1.getSelectedSensorPosition()),
                 positionToDistanceMeter(rightMotor1.getSelectedSensorPosition()));
+
         SmartDashboard.putData("field", field);
         SmartDashboard.putData("trajField", trajField);
+
+        putDashboard();
     }
 
     // Normal drivebase
     public static void teleop() {
 
-        double leftV = -Robot.xbox.getLeftY() * 0.9;
-        double rightV = Robot.xbox.getRightY() * 0.9;
-        double middleV = Robot.xbox.getLeftX() * 0.9;
+        left = -Robot.xbox.getLeftY() * 0.9;
+        right = Robot.xbox.getRightY() * 0.9;
+        middle = Robot.xbox.getLeftX() * 0.9;
 
-        drive.tankDrive(leftV, rightV);
-        middleMotor.set(middleV);
+        if (Robot.xbox.getLeftBumperPressed() || Robot.xbox.getRightBumperPressed()) {
+            left = 1;
+            right = 1;
+            middle = 1;
+        }
 
-        putDashboard();
+        drive.tankDrive(left, right);
+        middleMotor.set(middle);
     }
 
-    public static void directControl(double left, double right) {
+    public static void directControl(double leftMotorInput, double rightMotorInput, double middleMotorInput) {
+        left = leftMotorInput;
+        right = rightMotorInput;
+        middle = middleMotorInput;
         drive.tankDrive(left, right);
+        middleMotor.set(middle);
     }
 
     public static void runTraj(Trajectory trajectory, double timeInsec) {
@@ -130,41 +147,27 @@ public class DriveBase {
 
         // Convert chassis speed to wheel speed
         var wheelSpeeds = kinematics.toWheelSpeeds(chaspeed); // Left and right speed
-        double left = wheelSpeeds.leftMetersPerSecond; // Catch speed from wheelSpeed(with ctrl + left mice)
-        double right = wheelSpeeds.rightMetersPerSecond;
+        leftWheelSpeed = wheelSpeeds.leftMetersPerSecond; // Catch speed from wheelSpeed(with ctrl + left mice)
+        rightWheelSpeed = wheelSpeeds.rightMetersPerSecond;
 
-        leftPID.setSetpoint(left);
-        rightPID.setSetpoint(right);
+        leftPID.setSetpoint(leftWheelSpeed);
+        rightPID.setSetpoint(rightWheelSpeed);
 
         // To make the number of the encoder become the motor's volt
-        double leftVolt = leftPID.calculate(
+        LeftVolt = leftPID.calculate(
                 positionToDistanceMeter(leftMotor1.getSelectedSensorPosition() / NewAutoEngine.timer.get()), left)
-                + feedforward.calculate(left);
-        double rightVolt = rightPID.calculate(
+                + feedforward.calculate(leftWheelSpeed);
+        RightVolt = rightPID.calculate(
                 positionToDistanceMeter(rightMotor1.getSelectedSensorPosition() / NewAutoEngine.timer.get()), right)
-                + feedforward.calculate(right);
+                + feedforward.calculate(rightWheelSpeed);
 
-        leftmotor.setVoltage(leftVolt);
-        rightmotor.setVoltage(rightVolt);
+        leftmotor.setVoltage(LeftVolt);
+        rightmotor.setVoltage(RightVolt);
         drive.feed();
 
-        SmartDashboard.putNumber("leftVolt", leftVolt);// Motor's volt
-        SmartDashboard.putNumber("rightVolt", rightVolt);
-        SmartDashboard.putNumber("left_wheel_speed", left);// The wheel speed
-        SmartDashboard.putNumber("right_wheel_speed", right);
-        SmartDashboard.putNumber("left_error", leftPID.getPositionError());// The error of the PID
-        SmartDashboard.putNumber("right_error", rightPID.getPositionError());
         SmartDashboard.putNumber("errorPosX", currentPose.minus(goal.poseMeters).getX());// The distance between the
                                                                                          // target and the position
         SmartDashboard.putNumber("errorPosY", currentPose.minus(goal.poseMeters).getY());
-    }
-
-    // Input the position of the encoder then calculate the distance(meter)
-    public static double positionToDistanceMeter(double position) {
-        double sensorRate = position / encoderPulse;
-        double wheelRate = sensorRate / gearing;
-        double positionMeter = 2 * Math.PI * Units.inchesToMeters(6) * wheelRate;
-        return positionMeter;
     }
 
     public static void updateODO() {
@@ -173,11 +176,8 @@ public class DriveBase {
                 positionToDistanceMeter(rightMotor1.getSelectedSensorPosition()));
         field.setRobotPose(odometry.getPoseMeters());
 
-        // get the robot's X
         SmartDashboard.putNumber("x", odometry.getPoseMeters().getX());
-        // get the robot's Y
         SmartDashboard.putNumber("y", odometry.getPoseMeters().getY());
-        // get the robot's rotation
         SmartDashboard.putNumber("heading", odometry.getPoseMeters().getRotation().getDegrees());
 
         kP = SmartDashboard.getNumber("kP", kP);
@@ -196,11 +196,24 @@ public class DriveBase {
         field.setRobotPose(odometry.getPoseMeters());
     }
 
-    // Put the data on the dashboard
     public static void putDashboard() {
         SmartDashboard.putNumber("leftEncoder", leftMotor1.getSelectedSensorPosition());
         SmartDashboard.putNumber("rightEncoder", rightMotor1.getSelectedSensorPosition());
         SmartDashboard.putNumber("gyro", gyro.getAngle());
+        SmartDashboard.putNumber("leftController_speed", left);// Motor's volt
+        SmartDashboard.putNumber("rightController_speed", right);
+        SmartDashboard.putNumber("middleController_speed", middle);
+        SmartDashboard.putNumber("left_wheel_speed", left);// The wheel speed
+        SmartDashboard.putNumber("right_wheel_speed", right);
+        SmartDashboard.putNumber("middle_wheel_speed", right);
+    }
+
+    // Input the position of the encoder then calculate the distance(meter)
+    public static double positionToDistanceMeter(double position) {
+        double sensorRate = position / encoderPulse;
+        double wheelRate = sensorRate / gearing;
+        double positionMeter = 2 * Math.PI * Units.inchesToMeters(6) * wheelRate;
+        return positionMeter;
     }
 
     // Here comes some mode to set up or update
