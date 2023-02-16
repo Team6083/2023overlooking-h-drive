@@ -72,7 +72,7 @@ public class DriveBase {
     private static final double gearing = 10.71;
 
     public static void init() {
-        leftMotor1 = new WPI_TalonSRX(Lm1);// Add ID into MotorControler
+        leftMotor1 = new WPI_TalonSRX(Lm1);
         leftMotor2 = new WPI_TalonSRX(Lm2);
         rightMotor1 = new WPI_TalonSRX(Rm1);
         rightMotor2 = new WPI_TalonSRX(Rm2);
@@ -82,8 +82,8 @@ public class DriveBase {
         rightmotor = new MotorControllerGroup(rightMotor1, rightMotor2);
         // Reverse the encoder
         leftmotor.setInverted(true);
-        drive = new DifferentialDrive(leftmotor, rightmotor);// Define which motor we need to
-                                                             // use in drivebasse
+        rightmotor.setInverted(false);
+        drive = new DifferentialDrive(leftmotor, rightmotor);
 
         // Reset encoder
         leftMotor1.configClearPositionOnQuadIdx(true, 10);
@@ -91,10 +91,9 @@ public class DriveBase {
         middleMotor.configClearPositionOnQuadIdx(true, 10);
 
         // Define gyro ID
-        gyro = new AHRS(SPI.Port.kMXP);// Gyro needs to add a class to fit into our library, which means that it
-                                       // needs an extra function to keep it working and Override it
+        gyro = new AHRS(SPI.Port.kMXP);
 
-        // For smartDashboard to take number and path which call back from pathWeaver
+        // Put path and status on field from PathWeaver on SmartDashboard
         odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(0),
                 positionToDistanceMeter(leftMotor1.getSelectedSensorPosition()),
                 positionToDistanceMeter(rightMotor1.getSelectedSensorPosition()));
@@ -102,7 +101,7 @@ public class DriveBase {
         SmartDashboard.putData("trajField", trajField);
     }
 
-    // Here comes some function to control robot normal drivebase
+    // Normal drivebase
     public static void teleop() {
 
         double leftV = -Robot.xbox.getLeftY() * 0.9;
@@ -115,19 +114,10 @@ public class DriveBase {
         putDashboard();
     }
 
-    // For some strange function, highly point to some special operate
     public static void directControl(double left, double right) {
-        drive.tankDrive(left, right);// The "directControl" is an easy way to control drivebase, we usually use it
-                                     // when there is a GyroWalker or EncoderWalker. To use directControl, we need
-                                     // two numbers which are used to control both sides. For instance, the
-                                     // EncoderWalker will output two numbers in order to control the motor of the
-                                     // right
-                                     // and left.
-        // also, we can use it to control just only one side, it will be correct if the
-        // number is legal.
+        drive.tankDrive(left, right);
     }
 
-    // Use to run Trajectory(path)
     public static void runTraj(Trajectory trajectory, double timeInsec) {
 
         // Set the goal of the robot in that second
@@ -160,8 +150,8 @@ public class DriveBase {
 
         SmartDashboard.putNumber("leftVolt", leftVolt);// Motor's volt
         SmartDashboard.putNumber("rightVolt", rightVolt);
-        SmartDashboard.putNumber("left", left);// The wheel speed
-        SmartDashboard.putNumber("right", right);
+        SmartDashboard.putNumber("left_wheel_speed", left);// The wheel speed
+        SmartDashboard.putNumber("right_wheel_speed", right);
         SmartDashboard.putNumber("left_error", leftPID.getPositionError());// The error of the PID
         SmartDashboard.putNumber("right_error", rightPID.getPositionError());
         SmartDashboard.putNumber("errorPosX", currentPose.minus(goal.poseMeters).getX());// The distance between the
