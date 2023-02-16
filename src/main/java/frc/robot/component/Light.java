@@ -11,14 +11,15 @@ public class Light {
     public static AddressableLEDBuffer ledBuffer;
     private static final Color purple = new Color(255, 0, 255);
     private static final Color yellow = new Color(255, 255, 0);
-    private static final int ledPort = 0; // to be confirmed
+    private static final int ledPort = 0; // PWM port to be confirmed
     private static final int ledLength = 10; // to be confirmed
 
     public static void init() {
         led = new AddressableLED(ledPort);
-        ledBuffer = new AddressableLEDBuffer(ledLength); // length
+        ledBuffer = new AddressableLEDBuffer(ledLength); // set length
         led.setLength(ledBuffer.getLength());
         led.start();
+        led.setData(ledBuffer);
     }
 
     public static void teleop() {
@@ -32,6 +33,7 @@ public class Light {
                 ledBuffer.setRGB(i, 255, 255, 0); // yellow
             }
         }
+        led.setData(ledBuffer);
         putDashboard();
     }
 
