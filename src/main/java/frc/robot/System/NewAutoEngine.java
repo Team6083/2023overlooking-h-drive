@@ -16,7 +16,15 @@ public class NewAutoEngine {
 
     static int currentStep = 0;
     static int trajectoryAmount = 12;
+    private static final int[] blueLeft = { 0, 1 };
+    private static final int[] blueMiddle = { 2, 3 };
+    private static final int[] blueRight = { 4, 5 };
+    private static final int[] redLeft = { 6, 7 };
+    private static final int[] redMiddle = { 8, 9 };
+    private static final int[] redRight = { 10, 11 };
     static String[] trajJSON = {};
+
+    static Trajectory[] trajectory = new Trajectory[trajectoryAmount];
     private static final String DoNothing = "DoNothing";
     private static final String BlueLeft = "BlueLeft";
     private static final String BlueMiddle = "BlueMiddle";
@@ -24,27 +32,28 @@ public class NewAutoEngine {
     private static final String RedLeft = "RedLeft";
     private static final String RedMiddle = "RedMiddle";
     private static final String RedRight = "RedRight";
+
+    // The string of the timer
     private static final String LeftRightTimer = "LeftRightTimer";
     private static final String MiddleTimer = "MiddleTimer";
-    private static final int[] blueLeft = { 0, 1 };
-    private static final int[] blueMiddle = { 2, 3 };
-    private static final int[] blueRight = { 4, 5 };
-    private static final int[] redLeft = { 6, 7 };
-    private static final int[] redMiddle = { 8, 9 };
-    private static final int[] redRight = { 10, 11 };
-    static Trajectory[] trajectory = new Trajectory[trajectoryAmount];
 
     public static Timer timer = new Timer();
+
     public static SendableChooser<String> chooser;
     private static SendableChooser<String> chooserTimer;
     public static String autoSeclected;
 
     public static void init() {
+
         chooser = new SendableChooser<String>();
         chooserTimer = new SendableChooser<String>();
+
         putChooser();
+        putChooserTimer();
+
         for (int i = 0; i < trajectoryAmount; i++) {
             try {
+                // Importing PathWeaver JSON
                 Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajJSON[i]);
                 trajectory[i] = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
             } catch (IOException ex) {
@@ -83,7 +92,7 @@ public class NewAutoEngine {
 
         switch (autoSeclected) {
             case DoNothing:
-                DriveBase.directControl(0, 0);
+                DriveBase.directControl(0,0,0);
                 break;
             case BlueLeft:
                 BlueLeft();
@@ -427,32 +436,34 @@ public class NewAutoEngine {
     public static void LeftRightTimer() {
         double leftV = 0.5;
         double rightV = 0.5;
+        double middleV = 0.5;
         timer.reset();
         timer.start();
         if (timer.get() <= 1.5) {
-            DriveBase.directControl(leftV, rightV);
+            DriveBase.directControl(leftV, rightV, middleV);
         } else if (timer.get() > 1.5 && timer.get() <= 6) {
             // arm and intake
         } else if (timer.get() > 6 && timer.get() <= 10.5) {
             // arm
         } else if (timer.get() > 10.5 && timer.get() < 15) {
-            DriveBase.directControl(-leftV, -rightV);
+            DriveBase.directControl(-leftV, -rightV, middleV);
         }
     }
 
     public static void MiddleTimer() {
         double leftV = 0.5;
         double rightV = 0.5;
+        double middleV = 0.5;
         timer.reset();
         timer.start();
         if (timer.get() <= 1.5) {
-            DriveBase.directControl(leftV, rightV);
+            DriveBase.directControl(leftV, rightV, middleV);
         } else if (timer.get() > 1.5 && timer.get() <= 6) {
             // arm and intake
         } else if (timer.get() > 6 && timer.get() <= 10.5) {
             // arm
         } else if (timer.get() > 10.5 && timer.get() < 15) {
-            DriveBase.directControl(-leftV, -rightV);
+            DriveBase.directControl(-leftV, -rightV, middleV);
         }
     }
 }
